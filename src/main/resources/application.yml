@@ -1,12 +1,12 @@
 spring:
   application:
     name: back
-  profiles:
-    include: secret
+  config:
+    import: optional:file:.env[.properties]
   ai:
     openai:
       base-url: https://api.groq.com/openai
-      api-key: ON_SECRET
+      api-key: ${GROQ_API_KEY}
       chat:
         options:
           model: meta-llama/llama-4-scout-17b-16e-instruct
