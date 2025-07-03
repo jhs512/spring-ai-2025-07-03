@@ -6,7 +6,7 @@ spring:
   ai:
     openai:
       base-url: https://api.groq.com/openai
-      api-key: ${GROQ_API_KEY}
+      api-key: ON_SECRET
       chat:
         options:
           model: meta-llama/llama-4-scout-17b-16e-instruct
