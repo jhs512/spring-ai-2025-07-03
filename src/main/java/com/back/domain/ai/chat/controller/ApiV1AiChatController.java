@@ -3,14 +3,11 @@ package com.back.domain.ai.chat.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.ai.chat.messages.SystemMessage;
 import org.springframework.ai.chat.messages.UserMessage;
-import org.springframework.ai.openai.OpenAiChatModel;
+import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 import java.util.UUID;
@@ -19,11 +16,11 @@ import java.util.UUID;
 @RequestMapping("/api/v1/ai/chat")
 @RequiredArgsConstructor
 public class ApiV1AiChatController {
-    private final OpenAiChatModel openAiChatModel;
+    private final ChatModel chatModel;
 
     @GetMapping("/write")
     public String write(String msg) {
-        String response = openAiChatModel.call(msg);
+        String response = chatModel.call(msg);
 
         return response;
     }
@@ -42,7 +39,7 @@ public class ApiV1AiChatController {
                 """;
 
         // 2) 시스템 메시지 + 사용자 메시지 순서대로 설정
-        String aiResponse = openAiChatModel
+        String aiResponse = chatModel
                 .call(
                         new SystemMessage(systemPrompt),
                         new UserMessage(msg)
@@ -66,8 +63,11 @@ public class ApiV1AiChatController {
 
     @GetMapping("/room/{chatRoomCode}")
     public String room(
-            @PathVariable String chatRoomCode
+            @PathVariable String chatRoomCode,
+            @RequestParam(defaultValue = "") String msg
     ) {
-        return "채팅방 : %s".formatted(chatRoomCode);
+        if (msg.isBlank()) return "채팅방 %s에 오신 것을 환영합니다.".formatted(chatRoomCode);
+
+        return chatModel.call(msg);
     }
 }
