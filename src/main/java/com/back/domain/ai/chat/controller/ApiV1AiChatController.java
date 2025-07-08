@@ -64,10 +64,32 @@ public class ApiV1AiChatController {
     @GetMapping("/room/{chatRoomCode}")
     public String room(
             @PathVariable String chatRoomCode,
-            @RequestParam(defaultValue = "") String msg
+            @RequestParam(defaultValue = "") String msg,
+            @RequestParam(defaultValue = "") String oldMsg
     ) {
-        if (msg.isBlank()) return "채팅방 %s에 오신 것을 환영합니다.".formatted(chatRoomCode);
+        if (msg.isBlank()) return """
+                채팅방 %s에 오신 것을 환영합니다.
+                <form>
+                    <input required type="text" name="msg" placeholder="메시지를 입력하세요." autofocus>
+                    <br>
+                    <button type="submit">전송</button>
+                """.formatted(chatRoomCode);
 
-        return chatModel.call(msg);
+        oldMsg = oldMsg.trim();
+
+        String response = chatModel.call(oldMsg + "\n\n" + msg);
+
+        oldMsg = oldMsg + "\n\n사용자 : " + msg + "\n\nLLM 답변 : " + response;
+
+        return """
+                <form>
+                    <textarea name="oldMsg" rows="30" cols="50">%s</textarea>
+                    <br>
+                    <input required type="text" name="msg" placeholder="메시지를 입력하세요." autofocus>
+                    <br>
+                    <button type="submit">전송</button>
+                </form>
+                """
+                .formatted(oldMsg.trim());
     }
 }
