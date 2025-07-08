@@ -3,14 +3,12 @@ package com.back.domain.ai.chat.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.memory.ChatMemory;
-import org.springframework.ai.chat.messages.Message;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
-import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -42,11 +40,12 @@ public class ApiV1AiInMemoryChatController {
             return "메시지(msg)를 입력해주세요.";
         }
 
-        List<Message> memories = chatMemory.get(chatRoomCode);
-
         String response = chatClient
                 .prompt()
-                .messages(memories)
+                .advisors(
+                        advisor -> advisor
+                                .param(ChatMemory.CONVERSATION_ID, chatRoomCode)
+                )
                 .user(msg)
                 .call()
                 .content();
