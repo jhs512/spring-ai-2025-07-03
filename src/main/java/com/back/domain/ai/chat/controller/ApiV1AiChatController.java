@@ -4,9 +4,16 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.ai.chat.messages.SystemMessage;
 import org.springframework.ai.chat.messages.UserMessage;
 import org.springframework.ai.openai.OpenAiChatModel;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.net.URI;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/ai/chat")
@@ -42,5 +49,25 @@ public class ApiV1AiChatController {
                 );
 
         return aiResponse;
+    }
+
+    @GetMapping("/room")
+    public ResponseEntity<Void> makeRoom() {
+        String chatRoomCode = UUID.randomUUID().toString();
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setLocation(URI.create("./room/" + chatRoomCode));
+
+        return ResponseEntity
+                .status(HttpStatus.FOUND)
+                .headers(headers)
+                .build();
+    }
+
+    @GetMapping("/room/{chatRoomCode}")
+    public String room(
+            @PathVariable String chatRoomCode
+    ) {
+        return "채팅방 : %s".formatted(chatRoomCode);
     }
 }
