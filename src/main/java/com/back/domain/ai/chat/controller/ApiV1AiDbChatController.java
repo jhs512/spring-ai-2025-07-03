@@ -12,10 +12,10 @@ import java.net.URI;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/v1/ai/memory/chat")
+@RequestMapping("/api/v1/ai/db/chat")
 @RequiredArgsConstructor
-public class ApiV1AiInMemoryChatController {
-    private final ChatClient chatClient;
+public class ApiV1AiDbChatController {
+    private final ChatClient dbChatClient;
 
     @GetMapping("/room")
     public ResponseEntity<Void> makeRoom() {
@@ -39,7 +39,7 @@ public class ApiV1AiInMemoryChatController {
             return "메시지(msg)를 입력해주세요.";
         }
 
-        String response = chatClient
+        String response = dbChatClient
                 .prompt()
                 .advisors(
                         advisor -> advisor

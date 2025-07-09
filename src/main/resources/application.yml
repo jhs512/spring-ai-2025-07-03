@@ -11,3 +11,14 @@ spring:
         options:
           model: meta-llama/llama-4-scout-17b-16e-instruct
           temperature: 0
+    chat:
+      memory:
+        repository:
+          jdbc:
+            initialize-schema: always
+            platform: mariadb
+  datasource:
+    url: jdbc:h2:./db_dev;MODE=MariaDB
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
